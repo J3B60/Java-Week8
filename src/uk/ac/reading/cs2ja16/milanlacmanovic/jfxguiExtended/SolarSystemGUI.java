@@ -1,4 +1,9 @@
+/**
+ * 
+ */
 package uk.ac.reading.cs2ja16.milanlacmanovic.jfxguiExtended;
+
+import java.util.Random;
 
 import javafx.animation.AnimationTimer;
 import javafx.application.Application;
@@ -21,103 +26,125 @@ import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
+import javafx.scene.paint.Paint;
 import javafx.stage.Stage;
 
 public class SolarSystemGUI extends Application {
-	int canvasSize = 512;
+	int canvasSize = 512;				// constants for relevant sizes
+	double earthOrbitSize = canvasSize /6;
+	double marsOrbitSize = canvasSize/3;//ADDED
+	double sunSize = 30;
+	double earthSize = 20;
+	double marsSize = 10;//ADDED
+	double earthx = 0;
+	double earthy = 0;
+	double marsx = 0;
+	double marsy = 0;
 	double t;
     GraphicsContext gc;
     private VBox rtPane;
     private HBox btPane;
     private boolean SetAnimationRun = true;
-	long startNanoTime = System.nanoTime();
-	@Override
+    private Random rgen = new Random();
+    Image earth = new Image(getClass().getResourceAsStream("earth.png"));
+    Image sun = new Image(getClass().getResourceAsStream("sun.png"));
+    Image mars = new Image(getClass().getResourceAsStream("mars.png"));
+    double sunPosx = canvasSize/2;
+    double sunPosy = canvasSize/2;
+    long startNanoTime = System.nanoTime();
+    SolarSystem ss;
+    /**
+     * drawIt ... draws object defined by given image at position and size
+     * @param i
+     * @param x
+     * @param y
+     * @param sz
+     */
 	public void drawIt (Image i, double x, double y, double sz) {
 		gc.drawImage(i, x - sz/2, y - sz/2, sz, sz );
 	}
 	
-	public void start(Stage primaryStage) throws Exception {
-		private void showMessage(String TStr, String CStr) {
-		    Alert alert = new Alert(AlertType.INFORMATION);
-		    alert.setTitle(TStr);
-		    alert.setHeaderText(null);
-		    alert.setContentText(CStr);
+	private void showMessage(String TStr, String CStr) {
+	    Alert alert = new Alert(AlertType.INFORMATION);
+	    alert.setTitle(TStr);
+	    alert.setHeaderText(null);
+	    alert.setContentText(CStr);
 
-		    alert.showAndWait();
-		}
-		/**
-		 * function to show in a box ABout the programme
-		 */
-		 private void showAbout() {
-			 showMessage("About", "Solar System with Mars and Earth");
-		 }
-	    /**
-		 * function to show in a box ABout the programme
-		 */
-		 private void showHelp() {
-			 showMessage("Help", "Start to start animation, Pause to pause animation");
-		 }
-	 
-		
-		MenuBar setMenu() {
-			MenuBar menuBar = new MenuBar();		// create menu
+	    alert.showAndWait();
+}
+/**
+ * function to show in a box ABout the programme
+ */
+ private void showAbout() {
+	 showMessage("About", "Solar System with Mars and Earth");
+ }
+    /**
+	 * function to show in a box ABout the programme
+	 */
+	 private void showHelp() {
+		 showMessage("Help", "Start to start animation, Pause to pause animation");
+	 }
+ 
+	
+	MenuBar setMenu() {
+		MenuBar menuBar = new MenuBar();		// create menu
 
-			Menu mHelp = new Menu("Help");			// have entry for help
-					// then add sub menus for About and Help
-					// add the item and then the action to perform
-			MenuItem mAbout = new MenuItem("About");
-			mAbout.setOnAction(new EventHandler<ActionEvent>() {
-	            @Override
-	            public void handle(ActionEvent actionEvent) {
-	            	showAbout();				// show the about message
-	            }	
-			});
-			MenuItem miHelp = new MenuItem("Help");
-			miHelp.setOnAction(new EventHandler<ActionEvent>() {
-	            @Override
-	            public void handle(ActionEvent actionEvent) {
-	            	showHelp();
-	            }	
-			});
-			mHelp.getItems().addAll(mAbout, miHelp); 	// add submenus to Help
-			
-					// now add File menu, which here only has Exit
-			Menu mFile = new Menu("File");
-			MenuItem mExit = new MenuItem("Exit");
-			mExit.setOnAction(new EventHandler<ActionEvent>() {
-			    public void handle(ActionEvent t) {
-			        System.exit(0);						// quit program
-			    }
-			});
-			mFile.getItems().addAll(mExit);
-			
-			menuBar.getMenus().addAll(mFile, mHelp);	// menu has File and Help
-			
-			return menuBar;					// return the menu, so can be added
-		}
+		Menu mHelp = new Menu("Help");			// have entry for help
+				// then add sub menus for About and Help
+				// add the item and then the action to perform
+		MenuItem mAbout = new MenuItem("About");
+		mAbout.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent actionEvent) {
+            	showAbout();				// show the about message
+            }	
+		});
+		MenuItem miHelp = new MenuItem("Help");
+		miHelp.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent actionEvent) {
+            	showHelp();
+            }	
+		});
+		mHelp.getItems().addAll(mAbout, miHelp); 	// add submenus to Help
 		
-		public void drawStatus(double sx, double sy, double ex, double ey, double mx, double my) {
-			rtPane.getChildren().clear();					// clear rtpane
-					// now create label
-			Label l = new Label("Sun at " + String.format("%.1f", sx) + ", " + String.format("%.1f", sy) + "\n" + "Earth at " + String.format("%.1f", ex) + ", " + String.format("%.1f", ey) + "\n" + "Mars at " + String.format("%.1f", mx) + ", " + String.format("%.1f", my));
-			rtPane.getChildren().add(l);				// add label to pane	
-		}
+				// now add File menu, which here only has Exit
+		Menu mFile = new Menu("File");
+		MenuItem mExit = new MenuItem("Exit");
+		mExit.setOnAction(new EventHandler<ActionEvent>() {
+		    public void handle(ActionEvent t) {
+		        System.exit(0);						// quit program
+		    }
+		});
+		mFile.getItems().addAll(mExit);
 		
+		menuBar.getMenus().addAll(mFile, mHelp);	// menu has File and Help
+		
+		return menuBar;					// return the menu, so can be added
 	}
-	private void drawSystem (double t) {
-		earthx = sunPosx + earthOrbitSize * Math.cos(t);	// calculate coordinates of earth
-		earthy = sunPosy + earthOrbitSize * Math.sin(t);
-		marsx= sunPosx + marsOrbitSize * Math.cos(t*0.5);
-		marsy= sunPosy + marsOrbitSize * Math.sin(t*0.5);
-			
-			// now clear canvas and draw earth and sun
-		gc.clearRect(0,  0,  canvasSize,  canvasSize);
-		drawIt( earth, earthx, earthy, earthSize );
-		drawIt( mars, marsx, marsy, marsSize );//Test
-		drawIt( sun, sunPosx, sunPosy, sunSize );
-		drawStatus(sunPosx, sunPosy, earthx, earthy, marsx, marsy);
-
+	
+	public void drawStatus(double sx, double sy, double ex, double ey, double mx, double my) {
+		rtPane.getChildren().clear();					// clear rtpane
+				// now create label
+		Label l = new Label("Sun at " + String.format("%.1f", sx) + ", " + String.format("%.1f", sy) + "\n" + "Earth at " + String.format("%.1f", ex) + ", " + String.format("%.1f", ey) + "\n" + "Mars at " + String.format("%.1f", mx) + ", " + String.format("%.1f", my));
+		rtPane.getChildren().add(l);				// add label to pane	
 	}
+	
+	private void SystemPosSet(double x, double y) {
+		// now clear canvas and draw sun and moon
+		gc.clearRect(0,  0,  canvasSize,  canvasSize);		// clear canvas
+		sunPosx = x;
+		sunPosy = y;	// draw Sun									// give its position 
+	}
+	
+	/**
+	 * calculate position of Earth at specified angle and then draw system
+	 * @param t		angle (time dependent) of Earth
+	 */
+	private void drawSystem(double t, GraphicsContext gc, ) {
+		ss.SystemLayout(t);
+	}
+	
 	private void setMouseEvents (Canvas canvas) {
 	       canvas.addEventHandler(MouseEvent.MOUSE_PRESSED, 
 	    	       new EventHandler<MouseEvent>() {

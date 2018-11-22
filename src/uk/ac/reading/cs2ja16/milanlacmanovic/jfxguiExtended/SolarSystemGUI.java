@@ -38,9 +38,7 @@ public class SolarSystemGUI extends Application {
     private HBox btPane;
     private boolean SetAnimationRun = true;
     private Random rgen = new Random();
-    Image earth = new Image(getClass().getResourceAsStream("earth.png"));
-    Image sun = new Image(getClass().getResourceAsStream("sun.png"));
-    Image mars = new Image(getClass().getResourceAsStream("mars.png"));
+
     double sunPosx = canvasSize/2;
     double sunPosy = canvasSize/2;
     long startNanoTime = System.nanoTime();
@@ -53,7 +51,7 @@ public class SolarSystemGUI extends Application {
      * @param sz
      */
 	public void drawIt (Image i, double x, double y, double sz) {
-		
+		gc.drawImage(i, x - sz/2, y - sz/2, sz, sz );
 	}
 	
 	private void showMessage(String TStr, String CStr) {
@@ -118,6 +116,7 @@ public class SolarSystemGUI extends Application {
 	public void drawStatus(double sx, double sy, double ex, double ey, double mx, double my) {
 		rtPane.getChildren().clear();					// clear rtpane
 				// now create label
+		//Need to loop for all items in solar system and add to temp 
 		Label l = new Label("Sun at " + String.format("%.1f", sx) + ", " + String.format("%.1f", sy) + "\n" + "Earth at " + String.format("%.1f", ex) + ", " + String.format("%.1f", ey) + "\n" + "Mars at " + String.format("%.1f", mx) + ", " + String.format("%.1f", my));
 		rtPane.getChildren().add(l);				// add label to pane	
 	}
@@ -125,7 +124,7 @@ public class SolarSystemGUI extends Application {
 	private void SystemPosSet(double x, double y) {
 		// now clear canvas and draw sun and moon
 		gc.clearRect(0,  0,  canvasSize,  canvasSize);		// clear canvas
-		ss.SunPosSet();								// give its position 
+		ss.SunPosSet(x, y);								// give its position 
 	}
 	
 	/**
@@ -134,8 +133,7 @@ public class SolarSystemGUI extends Application {
 	 */
 	private void drawSystem (double t) {
 		gc.clearRect(0,  0,  canvasSize,  canvasSize);
-		
-
+		ss.SystemLayout(t, this);
 	}
 	
 	private void setMouseEvents (Canvas canvas) {
@@ -217,6 +215,7 @@ public class SolarSystemGUI extends Application {
 		
 	    Group root = new Group();					// for group of what is shown			// put it in a scene				// apply the scene to the stage
 	    Canvas canvas = new Canvas( canvasSize, canvasSize );
+	    ss.setCanvasSize(canvasSize);
 	    							// create canvas onto which animation shown
 	    holder.getChildren().add(canvas);
 	    root.getChildren().add( holder );			// add to root and hence stage
@@ -255,6 +254,10 @@ public class SolarSystemGUI extends Application {
 	    	}.start();					// start it
 	    
 		stagePrimary.show();
+	}
+	
+	public int getCanvasSize(){
+		return canvasSize;
 	}
 	
 	public static void main(String[] args) {

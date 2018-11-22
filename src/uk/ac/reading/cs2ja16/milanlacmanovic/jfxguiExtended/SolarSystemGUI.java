@@ -31,15 +31,7 @@ import javafx.stage.Stage;
 
 public class SolarSystemGUI extends Application {
 	int canvasSize = 512;				// constants for relevant sizes
-	double earthOrbitSize = canvasSize /6;
-	double marsOrbitSize = canvasSize/3;//ADDED
 	double sunSize = 30;
-	double earthSize = 20;
-	double marsSize = 10;//ADDED
-	double earthx = 0;
-	double earthy = 0;
-	double marsx = 0;
-	double marsy = 0;
 	double t;
     GraphicsContext gc;
     private VBox rtPane;
@@ -52,7 +44,7 @@ public class SolarSystemGUI extends Application {
     double sunPosx = canvasSize/2;
     double sunPosy = canvasSize/2;
     long startNanoTime = System.nanoTime();
-    SolarSystem ss;
+    SolarSystem ss = new SolarSystem();
     /**
      * drawIt ... draws object defined by given image at position and size
      * @param i
@@ -61,7 +53,7 @@ public class SolarSystemGUI extends Application {
      * @param sz
      */
 	public void drawIt (Image i, double x, double y, double sz) {
-		gc.drawImage(i, x - sz/2, y - sz/2, sz, sz );
+		
 	}
 	
 	private void showMessage(String TStr, String CStr) {
@@ -133,16 +125,17 @@ public class SolarSystemGUI extends Application {
 	private void SystemPosSet(double x, double y) {
 		// now clear canvas and draw sun and moon
 		gc.clearRect(0,  0,  canvasSize,  canvasSize);		// clear canvas
-		sunPosx = x;
-		sunPosy = y;	// draw Sun									// give its position 
+		ss.SunPosSet();								// give its position 
 	}
 	
 	/**
 	 * calculate position of Earth at specified angle and then draw system
 	 * @param t		angle (time dependent) of Earth
 	 */
-	private void drawSystem(double t, GraphicsContext gc, ) {
-		ss.SystemLayout(t);
+	private void drawSystem (double t) {
+		gc.clearRect(0,  0,  canvasSize,  canvasSize);
+		
+
 	}
 	
 	private void setMouseEvents (Canvas canvas) {
